@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lazarte</title>
+    <!-- Bootstrap -->
+    
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="boots/js/bootstrap.min.js"></script>
+    <script src="js/select2.js"></script>
+    <script src="cordova.js"></script>
+
+
+    <link href="boots/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/select2.css" rel="stylesheet">
+
+    <style>
+    	.navbar-header{color: white; background-color: #337ab7}
+    	.navbar-brand{color: white !important}	
+    	.navbar-default .navbar-toggle{display: none !important}
+
+    	#res{}
+
+    	.botonazo{margin: 30px auto 30px auto; width: 150px; display: block !important}
+
+      .alert-success{text-align: center;}
+    </style>
+</head>
+<body>
+
+  <nav class="navbar navbar-default" role="navigation">
+  <!-- El logotipo y el icono que despliega el menú se agrupan
+       para mostrarlos mejor en los dispositivos móviles -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+        <span class="sr-only">Lazarte</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Reporte de incidentes</a>
+      <!--<span class="icon-bar"></span>-->
+    </div>
+  </nav>
+
+  <div class="container">
+    <form>
+      <!--<div class="form-group">
+        <label for="exampleInputEmail1">Email address</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword1">Password</label>
+        <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <label for="exampleInputFile">File input</label>
+        <input type="file" id="exampleInputFile">
+        <p class="help-block">Example block-level help text here.</p>
+      </div>-->
+      <div class="form-group">
+      	<label for="exampleInputFile">Empleado</label>
+        <select class="form-control empleado js-example-basic-single" id="emp">
+          <option value="0">Seleccione un empleado...</option>
+        </select>
+      </div>
+      <div class="form-group">
+      	<label for="exampleInputFile">Tipo de accidente</label>
+        <select class="form-control tipo js-example-basic-single" id="tac">
+          <option value="0">Seleccione un Tipo de Accidente...</option>
+        </select>
+      </div>
+      <div class="form-group">
+      	<label for="exampleInputFile">Lesión</label>
+        <select class="form-control lesion js-example-basic-single" id="les">
+          <option value="0">Seleccione una lesión...</option>
+        </select>
+      </div>
+      <div class="form-group">
+      	<label for="exampleInputFile">Zona de la lesión</label>
+        <select class="form-control zona js-example-basic-single" id="zcp">
+          <option value="0">Seleccione la zona de lesión...</option>
+        </select>
+      </div>
+      <!--<div class="checkbox">
+        <label>
+          <input type="checkbox"> Check me out
+        </label>
+      </div>-->
+      <div class="form-group">
+      	<div id="boton" type="submit" class="btn btn-primary botonazo">Enviar Consulta</div>
+      </div>
+      <div id="res" class="alert"></div>
+    </form>
+  </div>
+  <div id="deviceProperties"></div>
+
+
+    <script type="text/javascript">
+
+      document.addEventListener("deviceready", function (){
+        /*alert('deviceready');
+        if (typeof(window.device) != 'undefined') {
+          window.uuid=window.device.uuid;
+          alert('Window Device UUID: '+ window.device.uuid);
+        }else{
+          //alert('window.device AUN no existe');
+        }*/
+
+        /*if (typeof(device) != 'undefined') {
+          window.uuid=window.device.uuid;
+          alert('Device UUID: '+ device.uuid);
+        }else{
+          //alert('device AUN no existe');
+        }*/
+
+
+        
+
+        
+
+      }, false);
+
+      $.getJSON( "http://nubelaz.com.ar.elserver.com/empleados.php", function( data ) {
+          var items = [];
+          $.each( data, function( key, val ) {
+            $( ".empleado" ).append( "<option value='" + val.id + "'>" + val.nombre_emp + "</option>" );
+          });
+        });
+
+        $.getJSON( "http://nubelaz.com.ar.elserver.com/lesiones.php", function( data ) {
+          var items = [];
+          $.each( data, function( key, val ) {
+            $( ".lesion" ).append( "<option value='" + val.id + "'>" + val.nombre_les + "</option>" );
+          });
+        });
+
+        $.getJSON( "http://nubelaz.com.ar.elserver.com/tipos.php", function( data ) {
+          var items = [];
+          $.each( data, function( key, val ) {
+            $( ".tipo" ).append( "<option value='" + val.id + "'>" + val.nombre_tac + "</option>" );
+          });
+        });
+
+        $.getJSON( "http://nubelaz.com.ar.elserver.com/zonas.php", function( data ) {
+          var items = [];
+          $.each( data, function( key, val ) {
+            $( ".zona" ).append( "<option value='" + val.id + "'>" + val.nombre_zcp + "</option>" );
+          });
+        });
+
+        $(".js-example-basic-single").select2();
+
+        //BOTON PARA ENVIAR
+        $('#boton').click(function(event){
+            event.preventDefault();
+
+            var emp = $('#emp').val();
+            var les = $('#les').val();
+            var tac = $('#tac').val();
+            var zcp = $('#zcp').val();
+
+            
+            jQuery.post("http://nubelaz.com.ar.elserver.com/procesar.php", {
+              emp:emp,
+              les:les,
+              tac:tac,
+              zcp:zcp,
+              uuid:window.device.uuid
+            }, function(data, textStatus){
+              if(data == 1){
+                $('#res').html("Datos insertados.");
+                $('#res').addClass('alert-success');
+                $('#emp').val('0');
+                $('#tac').val('0');
+                $('#les').val('0');
+                $('#zcp').val('0');
+              }
+              else{
+                $('#res').html("Ha ocurrido un error.");
+                $('#res').addClass('alert-success');
+              }
+            });
+          });
+        
+
+    </script>
+</body>
+</html>
